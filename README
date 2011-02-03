@@ -1,0 +1,156 @@
+===========================================================================
+
+				  Libauxv
+	   The "Auxiliary Vector Library" User & Developer Guide
+			   For the GNU/Linux OS
+		      Contributed by IBM Corporation
+		    Copyright (C) 2010 IBM Corporation
+
+===========================================================================
+
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.3 or any later
+version published by the Free Software Foundation; with no Invariant
+Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the
+license is included in the file entitled "GFDLv1.3.txt"
+
+===========================================================================
+NOTE:Eight space tabs are the optimum editor setting for reading this file.
+===========================================================================
+
+		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
+		      Date Created: January 29, 2010
+			  Last Updated: Dec 1, 2010
+
+===========================================================================
+
+Table of Contents:
+
+	1.  Introduction
+	  1.1. Rationale
+	2.  License
+	3.  Supported Platforms
+	4.  Dependencies (TODO)
+	  4.1  GNU/Linux OS (TODO)
+	  4.2  GLIBC Minimum Version (TODO)
+	  4.3  GLIBC Headers (TODO)
+	  4.4  Autoconf & GNU Make (TODO)
+	5.  Configuration (TODO)
+	  5.1  Configure Switches (TODO)
+	6.  Source Tree Layout (TODO)
+	7.  Make Rules (TODO)
+	8.  Precision (TODO)
+	9.  Testing (make check) (TODO)
+	10.  Installation (TODO)
+	11.  Static Linking (TODO)
+	12.  Contributing
+	13.  Use
+
+	A.  History
+	B.  Acknowledgements
+
+---------------------------------------------------------------------------
+1.  Introduction
+
+---------------------------------------------------------------------------
+1.1.  Rationale
+
+The functionality in Libauxv was originally proposed for GLIBC but was
+rejected:
+
+http://sources.redhat.com/ml/libc-alpha/2006-01/msg00051.html
+
+The reason this library is necessary is as follows:
+
+1.) GLIBC won't provide access to the 5th process variable, which is the
+auxiliary vector (see the link above).
+
+2.) Libraries may need access to the auxv information but only 'main' can find
+it.
+
+3.) Libraries may try to find the auxv after the env, but as a library you
+can't guarantee that a user application hasn't mangled the environment.
+
+4.) Given that the most reliable method for querying the aux vector is through
+/proc/self/auxv a reusable library is useful.
+
+5.) There is an automatic fallback to attempting to read the aux vector from
+the env if the /proc/self/auxv isn't supported by the kernel.
+
+Note: You still need to run /sbin/ldconfig for correct functionality. If
+you have specified a non-default library install path, make sure this path
+is listed in /etc/ld.so.conf
+
+---------------------------------------------------------------------------
+2.  License
+
+Libauxv is released under the "New BSD License" as indicated by the file
+COPYING.txt.
+
+---------------------------------------------------------------------------
+3.  Supported Platforms
+
+Currently Libauxv has only been tested on the Power Architecture POWER
+platforms.  The maintainer will accept patches for other archtiectures.  The
+principle should work for other architectures and platforms.
+
+---------------------------------------------------------------------------
+4.  Dependencies
+---------------------------------------------------------------------------
+4.1  GNU/Linux OS
+---------------------------------------------------------------------------
+4.2  GLIBC Minimum Version
+---------------------------------------------------------------------------
+4.3  GLIBC Headers
+---------------------------------------------------------------------------
+4.4  Autoconf & GNU Make
+---------------------------------------------------------------------------
+5.  Configuration
+---------------------------------------------------------------------------
+5.1  Configure Switches
+---------------------------------------------------------------------------
+6.  Source Tree Layout
+---------------------------------------------------------------------------
+7.  Make Rules
+---------------------------------------------------------------------------
+8.  Precision (TODO)
+---------------------------------------------------------------------------
+9.  Testing (make check) (TODO)
+---------------------------------------------------------------------------
+10.  Installation (TODO)
+---------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------
+11. Use
+
+It should be noted that use of Libauxv will most likely result in the mapping
+of a page of memorty that is not able to be reclaimed or freed until the
+parent process exits.
+
+
+---------------------------------------------------------------------------
+12. Contributing
+
+We simply ask that you contribute modifications back to the community as a
+gesture of goodwill.
+
+In order to contribute as an individual please fill out the ICLA.txt file,
+sign, date, scan, and email to the maintainer.
+
+In order to contribute as a corporate entit please fill out the CCLA.txt file,
+sign, date, scan, and email to the maintainer.
+
+Individual contributions should use the signed-off method as indicated in the
+CONTRIBUTIONS file.
+
+---------------------------------------------------------------------------
+A. History
+
+ - Libauxv was originally written and packaged by Sean Curry
+   <spcurry5@linux.vnet.ibm.com>
+
+ - It was modified for performance by Steve Munroe <munroesj@us.ibm.com>
+
+ - It was updated for breadth and packaged for community consumption by Ryan
+   S. Arnold <rsa@us.ibm.com>

@@ -1,0 +1,128 @@
+.\" VIEW THIS MAN PAGE WITH THE COMMAND:
+.\" groff -mdoc -Tascii auxv.3
+.Dd February 2nd, 2010
+.Os Linux
+.Dt AUXV \&3 "Library Functions Manual"
+.Sh NAME
+.Nm prefetch_auxv,
+.Nm query_auxv,
+.Nm get_auxv
+.Nd functions for querying the auxiliary vector
+.Sh LIBRARY
+.Lb libauxv
+.Sh SYNOPSIS
+.In auxv/auxv.h
+.Fn "int prefetch_auxv" "void"
+.Fn "ElfW(Addr) query_auxv" "int type"
+.Fn "ElfW(auxv_t) * get_auxv" "void"
+.Sh DESCRIPTION
+.Pp
+.Fn prefetch_auxv
+allocates PAGE_SIZE amount of memory on the heap and loads the
+.Pa /proc/self/auxv 
+into the allocated memory for later use in querying for features.  If
+.Pa /proc/self/auxv
+is not available it attempts to find the auxv following the process
+environment variables.  Calling this function prior to calling 
+.Fn query_auxv
+allows the allocation to be performed at a predictable point rather than with
+lazy allocation at the first query.
+.Pp
+.Fn query_auxv
+scans the heap allocated auxv for the
+.Vt auxv_t
+struct which has a 
+.Va a_type
+member variable that matches the 
+.Ar type
+argument.  If the auxv has not been allocated on the heap then this function
+will invoke
+.Fn prefetch_auxv
+prior to querying.
+.Pp
+.Fn get_auxv
+returns an
+.Vt auxv_t *
+(pointer) to the heap allocated auxv.
+.Pp
+NOTE: Memory allocated by this library can not be reclaimed.
+.Sh RETURN VALUES
+.Fn query_auxv 
+returns the 
+.Va a_val 
+member variable of the 
+.Vt auxv_t 
+struct which had a
+.Va a_type 
+that matched the 
+.Ar type
+argument. the value 0 is returned if no 
+.Vt auxv_t
+struct with an
+.Va a_type 
+matching the 
+.Ar type
+argument could be found, or if an error has occured while attempting to read
+.Pa /proc/self/auxv.
+.Pp
+.Fn get_auxv
+returns an
+.Vt auxv_t *
+(pointer) to the first auxv_t in the heap allocated auxv.
+.Sh FILES
+.Bl -tag -width "/proc/self/auxv" -compact
+.It Sy /proc/self/auxv
+the file that this function scans when attempting to find an 
+.Vt auxv_t 
+structure with an 
+.Va a_type 
+member that matches the argument.
+.El
+.Bl -tag -width "elf.h" -compact
+.It Sy elf.h
+the system header file that contains the AT_* definitions that match the
+.Va a_type
+parameters expected by the
+.Fn query_auxv
+function.
+.El
+.Bl -tag -width "auxv.h" -compact
+.It Sy auxv.h
+the system header file provided by this library which provides additional AT_*
+definitions which may not yet be available in elf.h.
+.El
+.Sh EXAMPLES
+.Bd -literal
+#include <auxv.h>
+#include <assert.h>
+
+int main()
+{
+	assert(query_auxv(AT_PAGESZ) == getpagesize());
+	return 0;
+}
+.Ed
+.Sh KNOWN ISSUES
+On older systems which don't have /proc/self/auxv support libauxv will scan to
+the end of the environment, knowing that the auxv follows it immediately.  It
+uses a constructor to capture the location of the original
+__environ prior to a potential user
+.Fn setenv
+call which would effectively move the env such that the auxv no longer
+follows it.  This constructor can not operate properly prior to a user
+.Fn setenv
+call if libauxv is opened via a
+.Fn dlopen
+call.  So don't use
+.Fn setenv
+and 
+.Fn dlopen
+when using libauxv on a system with no /proc/self/auxv.
+.Sh SEE ALSO
+.Xr lsauxv 1
+.Sh REPORTING BUGS
+.Pp
+Email bug reports to Ryan S. Arnold <rsa@us.ibm.com>.
+.Sh AUTHORS
+Written by Sean Curry <spcurry5@linux.vnet.ibm.com>, Steven Munroe
+<munroesj@us.ibm.com>, and Ryan S. Arnold <rsa@us.ibm.com>.

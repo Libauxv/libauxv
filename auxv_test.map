@@ -1,0 +1,4 @@
+LIBAUXV_0.0.9 {
+   global: query_auxv; get_auxv; prefetch_auxv; __auxv_fallback;
+   local: *;
+};

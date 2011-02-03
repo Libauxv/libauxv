@@ -1,0 +1,212 @@
+ifneq (,)
+This Makefile requires GNU Make.
+endif
+
+top_srcdir := @top_srcdir@
+top_builddir = .
+
+bindir=@bindir@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+mandir=@mandir@
+sysheaders=@sysheaders@
+exec_prefix=@exec_prefix@
+prefix=@prefix@
+
+# Install the header files here.
+ifndef includedir
+includedir = $(prefix)/include
+endif
+inst_includedir = $(install_root)$(includedir)
+
+# Install the libauxv library here.
+ifndef libdir
+libdir = $(exec_prefix)/lib
+endif
+inst_libdir = $(install_root)$(libdir)
+
+# Install the lsauxv executable here.
+ifndef bindir
+bindir = $(exec_prefix)/bin
+endif
+inst_bindir = $(install_root)$(bindir)
+
+# Install the man pages here.
+ifndef mandir
+mandir = $(prefix)/man
+endif
+inst_mandir = $(install_root)$(mandir)
+
+lib_name = @PACKAGE_NAME@
+app_name = ls@PACKAGE_NAME@
+auxv_name = @PACKAGE_NAME@
+auxv_version = @PACKAGE_VERSION@
+
+STATIC_LIBRARY = lib@PACKAGE_NAME@.a
+
+# e.g. libauxv-1.0.0.so
+SHARED_REALNAME_LIB = lib@PACKAGE_NAME@-@PACKAGE_VERSION@.so
+SHARED_TEST_REALNAME_LIB = lib@PACKAGE_NAME@_test-@PACKAGE_VERSION@.so
+
+ # e.g. libauxv.so.1.  Since this library intends to use symbol versioning there
+ # probably isn't ever a reason to move to .so.2 or later.
+SHARED_SONAME_LIB = lib@PACKAGE_NAME@.so.1
+SHARED_TEST_SONAME_LIB = lib@PACKAGE_NAME@_test.so.1
+
+SHARED_LINKERNAME_LIB = lib@PACKAGE_NAME@.so
+SHARED_TEST_LINKERNAME_LIB = lib@PACKAGE_NAME@_test.so
+
+SHARED_TEST_LINKERNAME = @PACKAGE_NAME@_test
+
+LDCONFIG = /sbin/ldconfig
+INSTALL = install
+
+install_headers=$(top_srcdir)/include
+
+all: @enable_shared@ @enable_static@ $(app_name)
+
+shared: $(top_builddir)/$(SHARED_REALNAME_LIB) $(top_builddir)/$(SHARED_LINKERNAME_LIB) $(top_builddir)/$(SHARED_SONAME_LIB)
+
+static:  $(top_builddir)/$(STATIC_LIBRARY)
+
+$(top_builddir)/$(app_name): $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_LINKERNAME_LIB)
+ifeq ($(sysheaders), ”)
+	@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -lpthread
+	@echo
+else
+	@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -I$(sysheaders) -lpthread
+	@echo
+endif
+
+#@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_SONAME_LIB) -lpthread
+$(top_builddir)/lsauxv.o: $(top_srcdir)/lsauxv.c $(install_headers)/auxv.h
+ifeq ($(sysheaders), ”)
+	@CC@ @CFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers)
+	@echo
+else
+	@CC@ @CFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers) -I$(sysheaders)
+	@echo
+endif
+
+$(top_builddir)/auxv.o: $(top_srcdir)/auxv.c $(install_headers)/auxv.h
+ifeq ($(sysheaders), ”)
+	@CC@ @CFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(top_srcdir)
+	@echo
+else
+	@CC@ @CFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(sysheaders) -I$(top_srcdir)
+	@echo
+endif
+
+# Create auxv.o -> auxv_test.o
+# We do this because we want to unit test some of the hidden internal symbols
+# of the library.
+$(top_builddir)/auxv_test.o: $(top_builddir)/auxv.o
+	@echo "+Invoking objcopy --globalize-symbol to make internal symbols available to the test suite."
+	objcopy --globalize-symbol=__auxv_fallback $^ $@
+	@echo
+
+# Create libauxv.so -> libauxv.so.1 symlink.
+$(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
+	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
+	ln -f -s $? $@
+	@echo
+
+# Create libauxv.so.1 -> libauxv-1.0.1.so symlink.
+# The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
+# be created by ldconfig be reading the `soname' from the SHARED_REALNAME_LIB.
+$(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
+	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
+	$(LDCONFIG) -l $(notdir $?)
+	@echo
+
+# This is the 'realname' shared object, i.e. the actual libauxv binary file.
+$(top_builddir)/$(SHARED_REALNAME_LIB): $(top_srcdir)/auxv.map $(top_builddir)/auxv.o
+	@echo +Linking shared object files into $@.
+ifeq ($(sysheaders), ”)
+	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o  -I$(top_srcdir)
+	@echo
+else
+	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o -I$(sysheaders)  -I$(top_srcdir)
+	@echo
+endif
+
+install: all
+	$(INSTALL) -d $(inst_bindir)
+	$(INSTALL) -t $(inst_bindir) $(top_builddir)/$(app_name)
+	$(INSTALL) -d $(inst_libdir)
+ifeq ("@enable_static@","static")
+	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(STATIC_LIBRARY)
+endif
+	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
+	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
+	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
+	$(INSTALL) -d $(inst_includedir)/
+	$(INSTALL) -d $(inst_includedir)/$(lib_name)
+	$(INSTALL) -t $(inst_includedir)/$(lib_name) $(install_headers)/*.h
+	$(INSTALL) -d $(inst_mandir)/
+	$(INSTALL) -t $(inst_mandir)/ $(top_srcdir)/man/auxv.3
+	$(INSTALL) -t $(inst_mandir)/ $(top_srcdir)/man/lsauxv.1
+
+.PHONY: install
+
+install-headers:
+	$(INSTALL) -d $(inst_includedir)/
+	$(INSTALL) -d $(inst_includedir)/$(lib_name)
+	$(INSTALL) -t $(inst_includedir)/$(lib_name) $(install_headers)/*.h
+.PHONY: install-headers
+
+uninstall:
+	-rm $(inst_bindir)/$(app_name)
+	-rm $(inst_includedir)/*.h
+	-rm $(inst_libdir)/$(SHARED_REALNAME_LIB)
+	-rm $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
+	-rm $(inst_libdir)/$(SHARED_SONAME_LIB)
+ifeq ("@enable_static@","static")
+	-rm $(inst_libdir)/$(STATIC_LIBRARY)
+endif
+	rm $(inst_mandir)/auxv.3
+	rm $(inst_mandir)/lsauxv.1
+
+libauxv_tests = test_auxv test_auxv_fallback
+
+# Create libauxv_test.so -> libauxv_test.so.1 symlink.
+# Create a test lib with specific symbols made global so that they can be unit
+# tested in the test-suite.
+$(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB): $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)
+	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
+	ln -f -s $? $@
+	@echo
+
+# Create libauxv_test.so.1 -> libauxv_test-1.0.1.so symlink.
+$(top_builddir)/$(SHARED_TEST_SONAME_LIB): $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)
+	@echo "+Running ldconfig to create the test library compat symlink $(notdir $@) -> $(notdir $?)"
+	$(LDCONFIG) -l $(notdir $?)
+	@echo
+
+$(top_builddir)/$(SHARED_TEST_REALNAME_LIB): $(top_srcdir)/auxv_test.map $(top_builddir)/auxv_test.o
+	@echo +Linking shared object files into $@.
+	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv_test.map,-soname,$(SHARED_TEST_SONAME_LIB) -o $@ $(top_builddir)/auxv_test.o  -I$(top_srcdir)
+	@echo
+
+# This rule depends on $(SHARED_TEST_SONAME_LIB) which is the same as
+# $(SHARED_SONAME_LIB) except it has the visibility of some internal 'static'
+# functions globalized so that the test-suite can unit test some fallback
+# features.
+$(top_builddir)/$(libauxv_tests): $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/$(addsuffix .c,$@)
+	@CC@ @CFLAGS@ -Wall -fpic -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread $(top_srcdir)/$(addsuffix .c,$@) -I$(install_headers) -I$(top_srcdir) -o $@
+	@echo
+
+# Only save the error output.
+$(addsuffix .out,$(libauxv_tests)): $(top_builddir)/$(libauxv_tests)
+	LD_LIBRARY_PATH="$(top_builddir)/:$$LD_LIBRARY_PATH" $(top_builddir)/$(patsubst %.out,%,$@) 2> $@ 1> /dev/null
+	@echo
+
+check: $(addsuffix .out,$(libauxv_tests))
+
+.PHONY: check
+
+clean:
+	rm $(top_builddir)/*
+
+.PHONY: clean

@@ -1,0 +1,99 @@
+.\" VIEW THIS MAN PAGE WITH THE COMMAND:
+.\" groff -mdoc -Tascii lsauxv.1
+.Dd February 3, 2010
+.Os Linux
+.Dt LSAUXV \&1 "General Commands Manual"
+.Sh NAME
+.Nm lsauxv
+.Nd command for querying the auxiliary vector
+.Sh SYNOPSIS
+.Nm lsauxv
+.Op Fl Fl help | Fl Fl info | Fl Fl list | Fl Fl hwcap
+.Nm lsauxv
+.Ar a_type1 a_type2 ...
+.Sh DESCRIPTION
+.Pp 
+This application takes one or more arguments, where each argument is a supported 
+.Va a_type ,
+and prints to standard out the corresponding 
+.Va a_val 
+value. If there are N 
+.Va a_type 
+arguements passed, then standard out will consists of N lines, where each line is the 
+.Va a_val 
+of the corresponding 
+.Va a_type 
+argument. Use 
+.Op Fl Fl list 
+to get a list of the supported 
+.Va a_type 
+arguments.
+.Pp 
+In this context an 
+.Em a_type argument
+refers to the 
+.Va a_type 
+member variable of the
+.Vt auxv_t
+structure, which is defined (on most systems) in 
+.Pa /usr/include/elf.h .
+For each 
+.Va a_type 
+argument, this application scans through the list of 
+.Vt auxv_t 
+structures in 
+.Pa /proc/self/auxv 
+until an 
+.Vt auxv_t 
+structure with a matching 
+.Va a_type 
+is found. The 
+.Va a_val 
+of the matching 
+.Vt auxv_t 
+structure is then printed out (one 
+.Va a_val 
+per line per 
+.Va a_type 
+parameter).
+.Sh OPTIONS
+.Bl -tag -width " "
+.It Op Fl Fl help
+Displays list of supported options and their descriptions.
+.It Op Fl Fl info
+Displays some basic information regarding the lsauxv application, as well as an example use.
+.It Op Fl Fl list
+Lists all supported a_type arguments.
+.It Op Fl Fl hwcap
+Lists the enabled hardware capabilities.
+.It Ar a_type1 a_type2 ...
+Replace 
+.Ar a_type1 a_type2 ...
+with one or more of the supported a_type arguments. The case of the arguments does not matter.
+.El
+.Sh FILES
+.Bl -tag -width "/proc/self/auxv" -compact
+.It Sy /proc/self/auxv
+the file that this application scans when attempting to find an auxv_t structure with an a_type member that matches the argument(s).
+.El
+.Sh EXAMPLES
+.Bl -item -compact
+.It 
+> lsauxv AT_PAGESZ AT_UID at_uid
+.It 
+4096
+.It 
+1016
+.It 
+1016
+.El
+.Sh DIAGNOSTICS
+.Ex -std lsauxv
+.Sh SEE ALSO
+.Xr query_auxv 3
+.Sh REPORTING BUGS
+.Pp
+Email bug reports to spcurry5@linux.vnet.ibm.com
+.Sh AUTHORS
+.Pp
+Written by Sean Curry.
