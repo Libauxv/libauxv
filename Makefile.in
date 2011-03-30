@@ -145,8 +145,11 @@ endif
 	$(INSTALL) -d $(inst_includedir)/$(lib_name)
 	$(INSTALL) -t $(inst_includedir)/$(lib_name) $(install_headers)/*.h
 	$(INSTALL) -d $(inst_mandir)/
-	$(INSTALL) -t $(inst_mandir)/ $(top_srcdir)/man/auxv.3
-	$(INSTALL) -t $(inst_mandir)/ $(top_srcdir)/man/lsauxv.1
+	$(INSTALL) -d $(inst_mandir)/man1
+	$(INSTALL) -d $(inst_mandir)/man3
+	$(INSTALL) -t $(inst_mandir)/man1/ $(top_srcdir)/man/lsauxv.1
+	$(INSTALL) -t $(inst_mandir)/man3/ $(top_srcdir)/man/auxv.3
+	ln -f -s auxv.3 $(inst_mandir)/man3/libauxv.3
 
 .PHONY: install
 
@@ -165,8 +168,9 @@ uninstall:
 ifeq ("@enable_static@","static")
 	-rm $(inst_libdir)/$(STATIC_LIBRARY)
 endif
-	rm $(inst_mandir)/auxv.3
-	rm $(inst_mandir)/lsauxv.1
+	rm $(inst_mandir)/man3/auxv.3
+	rm $(inst_mandir)/man3/libauxv.3
+	rm $(inst_mandir)/man1/lsauxv.1
 
 libauxv_tests = test_auxv test_auxv_fallback
 

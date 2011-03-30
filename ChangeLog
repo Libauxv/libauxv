@@ -1,2 +1,7 @@
-2011-02-02  Ryan S. Arnold  <rsa@us.ibm.com>
+2011-03-20  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* Makefile.in (install): Install lsauxv.1 into $(inst_mandir)/man1/
+	and auxv.3 into man3/ rather than $(inst_mandir).  Create libauxv.3
+	symlink to auxv.3.
+	(uninstall): Remove $(inst_mandir)/man1/lsauxv.1 and
+	$(inst_mandir)/man3/auxv.3.  Remove libauxv.3 symlink.
