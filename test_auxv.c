@@ -3,7 +3,7 @@
    Author(s): Steve Munroe <munroesj@us.ibm.com>
               Ryan S. Arnold <rsa@us.ibm.com>
 
-     Copyright (c) 2010, IBM Corporation
+     Copyright (c) 2010, 2011, IBM Corporation
      All rights reserved.
 
      Redistribution and use in source and binary forms, with or without
@@ -38,15 +38,15 @@
 
 int main(int argc, char *argv[], char *envp[])
 {
-	long clock_tick;
-	long page_size;
-	long dcache_size;
-	long icache_size;
-	long ucache_size;
+	unsigned long int clock_tick;
+	unsigned long int page_size;
+	unsigned long int dcache_size;
+	unsigned long int icache_size;
+	unsigned long int ucache_size;
 	char * platform = NULL;
 	char * base_platform = NULL;
 	ElfW(auxv_t) *at_ptr = NULL;
-	long hwcap_mask;
+	unsigned long int hwcap_mask;
 
 	printf("envp@%p\n", envp);
 	printf("environ@%p\n", __environ);
@@ -60,24 +60,24 @@ int main(int argc, char *argv[], char *envp[])
         at_ptr = get_auxv();
 	printf("get_auxv() = %p\n", at_ptr);
 
-	clock_tick = (long) query_auxv (AT_CLKTCK);
+	clock_tick = (unsigned long int) query_auxv (AT_CLKTCK);
 
 	if (clock_tick != 0)
 	  printf("CLKTCK=%ld\n", clock_tick);
 
-	dcache_size =  (long) query_auxv (AT_DCACHEBSIZE);
+	dcache_size =  (unsigned long int) query_auxv (AT_DCACHEBSIZE);
 
 	printf("DCACHE_SIZE=%ld\n", dcache_size);
 
-	icache_size = (long) query_auxv (AT_ICACHEBSIZE);;
+	icache_size = (unsigned long int) query_auxv (AT_ICACHEBSIZE);;
 
 	printf("ICACHE_SIZE=%ld\n", icache_size);
 
-	ucache_size = (long) query_auxv (AT_UCACHEBSIZE);
+	ucache_size = (unsigned long int) query_auxv (AT_UCACHEBSIZE);
 
 	printf("UCACHE_SIZE=%ld\n", ucache_size);
 
-	page_size = (long) query_auxv (AT_PAGESZ);
+	page_size = (unsigned long int) query_auxv (AT_PAGESZ);
 
 	printf("PAGE_SIZE=%ld\n", page_size);
 
@@ -93,9 +93,9 @@ int main(int argc, char *argv[], char *envp[])
 	else
 	    printf("AT_BASE_PLATFORM not supported\n");
 
-	hwcap_mask = (long) query_auxv (AT_HWCAP);
+	hwcap_mask = (unsigned long int) query_auxv (AT_HWCAP);
 
-	printf("HWCAP=%lx\n", hwcap_mask);
+	printf("HWCAP=0x%0*lx\n",2 * (int) sizeof(unsigned long int), hwcap_mask);
 #ifdef __powerpc__
 	if (hwcap_mask & PPC_FEATURE_32)
 	    printf("  32-bit\n");

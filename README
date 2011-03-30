@@ -4,7 +4,7 @@
 	   The "Auxiliary Vector Library" User & Developer Guide
 			   For the GNU/Linux OS
 		      Contributed by IBM Corporation
-		    Copyright (C) 2010 IBM Corporation
+		   Copyright (C) 2010, 2011 IBM Corporation
 
 ===========================================================================
 
@@ -20,7 +20,7 @@ NOTE:Eight space tabs are the optimum editor setting for reading this file.
 
 		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
 		      Date Created: January 29, 2010
-			  Last Updated: Dec 1, 2010
+			  Last Updated: Mar 20, 2011
 
 ===========================================================================
 
@@ -30,21 +30,13 @@ Table of Contents:
 	  1.1. Rationale
 	2.  License
 	3.  Supported Platforms
-	4.  Dependencies (TODO)
-	  4.1  GNU/Linux OS (TODO)
-	  4.2  GLIBC Minimum Version (TODO)
-	  4.3  GLIBC Headers (TODO)
-	  4.4  Autoconf & GNU Make (TODO)
-	5.  Configuration (TODO)
-	  5.1  Configure Switches (TODO)
-	6.  Source Tree Layout (TODO)
-	7.  Make Rules (TODO)
-	8.  Precision (TODO)
-	9.  Testing (make check) (TODO)
-	10.  Installation (TODO)
-	11.  Static Linking (TODO)
-	12.  Contributing
-	13.  Use
+	4.  Dependencies
+	  4.1  GNU/Linux OS
+	  4.2  GLIBC Minimum Version
+	5.  Configuration
+	6.  Make Rules
+	7.  Use
+	8.  Contributing
 
 	A.  History
 	B.  Acknowledgements
@@ -77,10 +69,6 @@ can't guarantee that a user application hasn't mangled the environment.
 5.) There is an automatic fallback to attempting to read the aux vector from
 the env if the /proc/self/auxv isn't supported by the kernel.
 
-Note: You still need to run /sbin/ldconfig for correct functionality. If
-you have specified a non-default library install path, make sure this path
-is listed in /etc/ld.so.conf
-
 ---------------------------------------------------------------------------
 2.  License
 
@@ -91,46 +79,92 @@ COPYING.txt.
 3.  Supported Platforms
 
 Currently Libauxv has only been tested on the Power Architecture POWER
-platforms.  The maintainer will accept patches for other archtiectures.  The
+platforms.  The maintainer will accept patches for other architectures.  The
 principle should work for other architectures and platforms.
 
 ---------------------------------------------------------------------------
 4.  Dependencies
 ---------------------------------------------------------------------------
 4.1  GNU/Linux OS
+
+Libauxv is designed to query /proc/self/auxv for the auxiliary vector.
+Sufficiently old kernels may not have support for this.  In this case Libauxv
+will attempt to use a fallback mechanism and locate the auxiliary vector in
+the process environment.
+
 ---------------------------------------------------------------------------
 4.2  GLIBC Minimum Version
----------------------------------------------------------------------------
-4.3  GLIBC Headers
----------------------------------------------------------------------------
-4.4  Autoconf & GNU Make
+
+Applications which intend to use libauxv must link against libpthread.so
+(-lpthread) because libauxv uses pthread_once () to enforce threadsafe
+singleton creation.  This of course requires a version of glibc with NPTL
+support (GLIBC 2.5)
+
 ---------------------------------------------------------------------------
 5.  Configuration
----------------------------------------------------------------------------
-5.1  Configure Switches
----------------------------------------------------------------------------
-6.  Source Tree Layout
----------------------------------------------------------------------------
-7.  Make Rules
----------------------------------------------------------------------------
-8.  Precision (TODO)
----------------------------------------------------------------------------
-9.  Testing (make check) (TODO)
----------------------------------------------------------------------------
-10.  Installation (TODO)
----------------------------------------------------------------------------
 
+Libauxv must be built in a directory that is not the base level source
+directory.
+
+  CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -g -O2" ../libauxv/configure \
+  --build=powerpc-linux --host=powerpc-linux --enable-shared \
+  2>&1 | tee _configure32
+
+  CC=/opt/at4.0/bin/gcc CFLAGS="-m64-g -O2" ../libauxv/configure \
+  --build=powerpc64-linux --host=powerpc64-linux --enable-shared \
+  2>&1 | tee _configure32
 
 ---------------------------------------------------------------------------
-11. Use
+6.  Make Rules
+
+  make all:
+    Build libauxv-X.Y.Z.so, libauxv.so, libauxv.so.1, and lsauxv.
+
+  make check:
+    The libauxv test suite tests the primary auxv fetching method as well as
+    the fallback method.  In order to test the fallback method a version of
+    the library is built which globalizes the __auxv_fallback symbol.  This
+    is libauxv_test-0.0.9.so, libauxv_test.so, and libauxv_test.so.1.  These
+    libraries never get installed.
+
+  make install:
+    Results in the installation of libauxv-X.Y.Z.so, libauxv.so, libauxv.so.1
+    into @libdir@ as specified by configure.
+
+    Results in the installation of lsauxv into @bindir@ as specified by
+    configure.
+
+    Results in the installation of <auxv/auxv.h> and <auxv/hwcap.h> into the
+    @includedir@ specified by configure.
+
+    Results in the installation of man/auxv.3 and man/lsauxv.1 into @mandir@
+    as specified by configure.  Also results in the creation of man/lsauxv.3
+    which points to man/auxv.3
+
+    install_root=<new_top_level>
+      This causes the aforementioned libraries, applications, and header files
+      to be installed into <new_top_level>/@libdir@ <new_top_level>/@bindir@,
+      <new_top_level>/@includedir@, and <new_top_level>/@mandir@
+
+  make uninstall:
+    Results in all installed files being removed.
+
+  make install-headers:
+    Results in the installation of <auxv/auxv.h> and <auxv/hwcap.h> into the
+    @includedir@ specified by configure.
+
+---------------------------------------------------------------------------
+7. Use
 
 It should be noted that use of Libauxv will most likely result in the mapping
 of a page of memorty that is not able to be reclaimed or freed until the
 parent process exits.
 
+For information on how to use the facilities provided by Libauxv please read
+the man pages auxv.3 and lsauxv.c included with this source code.
 
 ---------------------------------------------------------------------------
-12. Contributing
+8. Contributing
 
 We simply ask that you contribute modifications back to the community as a
 gesture of goodwill.

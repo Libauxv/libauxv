@@ -1,4 +1,18 @@
-2011-03-20  Ryan S. Arnold  <rsa@us.ibm.com>
+2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
+	* README: Updated sections on Dependencies, GNU/Linux OS, GLIBC
+	Minimum Version, Configuration, Make Rules, and Use.
+	* test_auxv.c (main): 'long' variables changed to 'unsigned long int'.
+	Updated printf of hwcap to print leading zeros based on sizeof
+	unsigned long int.
+	* man/auxv.3 (EXAMPLES): Add example code which shows how to use all of
+	the interfaces.  Add additional information on auxv/hwcap.h.
+	(RETURN VALUES): Added return value description from prefetch_auxv().
+	(SYNOPSIS): Added hwcap.h to synopsis.
+	(DEPENDENCIES): Added information on libpthread dependency.
+	(FILES): Added auxv/hwcap.h to the files list.
+
+2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* Makefile.in (install): Install lsauxv.1 into $(inst_mandir)/man1/
 	and auxv.3 into man3/ rather than $(inst_mandir).  Create libauxv.3

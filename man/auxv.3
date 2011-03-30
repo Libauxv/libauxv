@@ -12,6 +12,7 @@
 .Lb libauxv
 .Sh SYNOPSIS
 .In auxv/auxv.h
+.In auxv/hwcap.h
 .Fn "int prefetch_auxv" "void"
 .Fn "ElfW(Addr) query_auxv" "int type"
 .Fn "ElfW(auxv_t) * get_auxv" "void"
@@ -47,6 +48,13 @@ returns an
 .Pp
 NOTE: Memory allocated by this library can not be reclaimed.
 .Sh RETURN VALUES
+.Fn prefetch_auxv 
+returns
+.Va 0
+on success.  Otherwise it returns non-zero on error from
+.Fn pthread_once
+and errno is set.
+.Pp
 .Fn query_auxv 
 returns the 
 .Va a_val 
@@ -71,13 +79,6 @@ returns an
 (pointer) to the first auxv_t in the heap allocated auxv.
 .Sh FILES
 .Bl -tag -width "/proc/self/auxv" -compact
-.It Sy /proc/self/auxv
-the file that this function scans when attempting to find an 
-.Vt auxv_t 
-structure with an 
-.Va a_type 
-member that matches the argument.
-.El
 .Bl -tag -width "elf.h" -compact
 .It Sy elf.h
 the system header file that contains the AT_* definitions that match the
@@ -86,22 +87,83 @@ parameters expected by the
 .Fn query_auxv
 function.
 .El
-.Bl -tag -width "auxv.h" -compact
-.It Sy auxv.h
+.Bl -tag -width "auxv/auxv.h" -compact
+.It Sy auxv/auxv.h
 the system header file provided by this library which provides additional AT_*
-definitions which may not yet be available in elf.h.
+definitions which may not yet be available in elf.h.  This file also defines
+the protoypes for
+.Fn prefetch_auxv,
+.Fn query_auxv,
+and
+.Fn get_auxv.
+.El
+.Bl -tag -width "auxv/hwcap.h" -compact
+.It Sy auxv/hwcap.h
+the system header file that contains the platform specific hardware
+capabilities defintions that map to specific bits in the auxiliary vector HWCAP field.
+.El
+.It Sy /proc/self/auxv
+the file that libauxv function scans when attempting to find an
+.Vt auxv_t
+structure with an 
+.Va a_type
+member that matches the argument.
 .El
 .Sh EXAMPLES
 .Bd -literal
-#include <auxv.h>
+#include <auxv/auxv.h>
+#include <auxv/hwcap.h>
 #include <assert.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+#include <link.h>
 
 int main()
 {
-	assert(query_auxv(AT_PAGESZ) == getpagesize());
-	return 0;
+  ElfW(auxv_t) *at_ptr = NULL;
+  unsigned long int hwcap_mask;
+  char * platform = NULL;
+
+  if (prefetch_auxv ())
+    {
+      printf("prefetch_auxv () failed with errno %d.\\n", errno);
+      return -1;
+    }
+
+  hwcap_mask = (unsigned long int) query_auxv (AT_HWCAP);
+
+  printf("HWCAP=0x%0*lx\\n",2 * (int) sizeof(unsigned long int), hwcap_mask);
+
+#ifdef __powerpc__
+  if (hwcap_mask & PPC_FEATURE_64)
+      printf("  64-bit\\n");
+
+  if (hwcap_mask & PPC_FEATURE_32)
+      printf("  32-bit\\n");
+#endif
+
+  platform = (char*) query_auxv (AT_PLATFORM);
+
+  if (platform)
+    printf("PLATFORM=%s\\n", platform);
+  else
+    printf("AT_PLATFORM not supported\\n");
+
+  assert (query_auxv (AT_PAGESZ) == getpagesize ());
+
+  at_ptr = get_auxv ();
+  printf("get_auxv() = %p\\n", at_ptr);
+
+  return 0;
 }
 .Ed
+.Sh DEPENDENCIES
+Libauxv uses the POSIX function
+.Fn pthread_once
+in order to enforce threadsafe singleton creation when it reads the platform
+auxiliary vector.  Therefore there is a dependency on libpthread.so and the
+user application must be linked with -lpthread.
 .Sh KNOWN ISSUES
 On older systems which don't have /proc/self/auxv support libauxv will scan to
 the end of the environment, knowing that the auxv follows it immediately.  It
