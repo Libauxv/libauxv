@@ -1,5 +1,10 @@
 2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
+	* man/auxv.3 (RATIONALE): Added new section with information from
+	the README.
+
+2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
+
 	* README: Updated sections on Dependencies, GNU/Linux OS, GLIBC
 	Minimum Version, Configuration, Make Rules, and Use.
 	* test_auxv.c (main): 'long' variables changed to 'unsigned long int'.
