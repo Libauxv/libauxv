@@ -59,6 +59,8 @@ SHARED_TEST_LINKERNAME_LIB = lib@PACKAGE_NAME@_test.so
 
 SHARED_TEST_LINKERNAME = @PACKAGE_NAME@_test
 
+RANLIB = @RANLIB@
+
 LDCONFIG = /sbin/ldconfig
 INSTALL = install
 
@@ -131,6 +133,12 @@ else
 	@echo
 endif
 
+$(top_builddir)/$(STATIC_LIBRARY): $(top_builddir)/auxv.o
+	@echo +Archiving relocatable object files into $@.
+	$(AR) rc $@ $?
+	$(RANLIB) $@
+	@echo
+
 install: all
 	$(INSTALL) -d $(inst_bindir)
 	$(INSTALL) -t $(inst_bindir) $(top_builddir)/$(app_name)
@@ -172,7 +180,13 @@ endif
 	rm $(inst_mandir)/man3/libauxv.3
 	rm $(inst_mandir)/man1/lsauxv.1
 
-libauxv_tests = test_auxv test_auxv_fallback
+libauxv_tests :=
+ifeq (@enable_shared@,shared)
+       libauxv_tests += test_auxv_shared test_auxv_fallback_shared
+endif
+ifeq (@enable_static@,static)
+       libauxv_tests += test_auxv_static
+endif
 
 # Create libauxv_test.so -> libauxv_test.so.1 symlink.
 # Create a test lib with specific symbols made global so that they can be unit
@@ -197,12 +211,22 @@ $(top_builddir)/$(SHARED_TEST_REALNAME_LIB): $(top_srcdir)/auxv_test.map $(top_b
 # $(SHARED_SONAME_LIB) except it has the visibility of some internal 'static'
 # functions globalized so that the test-suite can unit test some fallback
 # features.
-$(top_builddir)/$(libauxv_tests): $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/$(addsuffix .c,$@)
-	@CC@ @CFLAGS@ -Wall -fpic -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread $(top_srcdir)/$(addsuffix .c,$@) -I$(install_headers) -I$(top_srcdir) -o $@
+$(top_builddir)/test_auxv_shared: $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/test_auxv.c
+	@echo "test_auxv_shared"
+	@CC@ @CFLAGS@ -Wall -fpic -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@
+
+$(top_builddir)/test_auxv_fallback_shared: $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/test_auxv_fallback.c
+	@echo "test_auxv_fallback_shared"
+	@CC@ @CFLAGS@ -Wall -fpic -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread $(top_srcdir)/test_auxv_fallback.c -I$(install_headers) -I$(top_srcdir) -o $@
 	@echo
 
+$(top_builddir)/test_auxv_static: $(top_builddir)/$(STATIC_LIBRARY)
+	@echo "test_auxv_static"
+	@CC@ @CFLAGS@ -Wall -static -L$(top_builddir) -Wl,--whole-archive $(top_builddir)/$(STATIC_LIBRARY) -Wl,--no-whole-archive -lpthread $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@
+
+
 # Only save the error output.
-$(addsuffix .out,$(libauxv_tests)): $(top_builddir)/$(libauxv_tests)
+$(addsuffix .out,$(libauxv_tests)): $(foreach test,$(libauxv_tests), $(top_builddir)/$(test))
 	LD_LIBRARY_PATH="$(top_builddir)/:$$LD_LIBRARY_PATH" $(top_builddir)/$(patsubst %.out,%,$@) 2> $@ 1> /dev/null
 	@echo
 

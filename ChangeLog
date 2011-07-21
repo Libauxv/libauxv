@@ -1,3 +1,10 @@
+2011-07-21  Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
+
+	* configure: Regenerated for version 0.1.0.
+	* Makefile.in: Added static library build and testcase.
+	* README: Added --enable-static.
+	* configure.ac: Updated to version 0.1.0 and added RANLIB export.
+
 2011-03-30  Ryan S. Arnold  <rsa@us.ibm.com>
 
 	* man/auxv.3 (RATIONALE): Added new section with information from

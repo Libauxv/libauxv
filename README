@@ -108,11 +108,11 @@ directory.
 
   CC=/opt/at4.0/bin/gcc CFLAGS="-m32 -g -O2" ../libauxv/configure \
   --build=powerpc-linux --host=powerpc-linux --enable-shared \
-  2>&1 | tee _configure32
+  --enable-static 2>&1 | tee _configure32
 
-  CC=/opt/at4.0/bin/gcc CFLAGS="-m64-g -O2" ../libauxv/configure \
+  CC=/opt/at4.0/bin/gcc CFLAGS="-m64 -g -O2" ../libauxv/configure \
   --build=powerpc64-linux --host=powerpc64-linux --enable-shared \
-  2>&1 | tee _configure32
+  --enable-static 2>&1 | tee _configure64
 
 ---------------------------------------------------------------------------
 6.  Make Rules
