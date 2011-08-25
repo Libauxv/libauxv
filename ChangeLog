@@ -1,3 +1,8 @@
+2011-08-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
+
+	* configure: Regenerated for libauxv 0.1.0.
+	* config.h.in: Likewise.
+
 2011-07-21  Tulio Magno Quites Machado Filho <tuliom@linux.vnet.ibm.com>
 
 	* configure: Regenerated for version 0.1.0.
