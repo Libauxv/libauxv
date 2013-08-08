@@ -46,7 +46,8 @@ int main(int argc, char *argv[], char *envp[])
 	char * platform = NULL;
 	char * base_platform = NULL;
 	ElfW(auxv_t) *at_ptr = NULL;
-	unsigned long int hwcap_mask;
+	unsigned long int hwcap_mask,
+			  hwcap2_mask;
 
 	printf("envp@%p\n", envp);
 	printf("environ@%p\n", __environ);
@@ -96,7 +97,12 @@ int main(int argc, char *argv[], char *envp[])
 	hwcap_mask = (unsigned long int) query_auxv (AT_HWCAP);
 
 	printf("HWCAP=0x%0*lx\n",2 * (int) sizeof(unsigned long int), hwcap_mask);
+
 #ifdef __powerpc__
+	hwcap2_mask = (unsigned long int) query_auxv (AT_HWCAP2);
+
+	printf("HWCAP2=0x%0*lx\n",2 * (int) sizeof(unsigned long int), hwcap2_mask);
+
 	if (hwcap_mask & PPC_FEATURE_32)
 	    printf("  32-bit\n");
 
@@ -162,6 +168,25 @@ int main(int argc, char *argv[], char *envp[])
 
 	if (hwcap_mask & PPC_FEATURE_HAS_VSX)
 	    printf("  HAS VSX\n");
+
+	if (hwcap2_mask & PPC_FEATURE2_ARCH_2_07)
+	    printf("  ARCH_2_07 ISA\n");
+
+	if (hwcap2_mask & PPC_FEATURE2_HAS_HTM)
+	    printf("  HAS HTM\n");
+
+	if (hwcap2_mask & PPC_FEATURE2_HAS_DSCR)
+	    printf("  HAS DSCR\n");
+
+	if (hwcap2_mask & PPC_FEATURE2_HAS_EBB)
+	    printf("  HAS EBB\n");
+
+	if (hwcap2_mask & PPC_FEATURE2_HAS_ISEL)
+	    printf("  HAS ISEL\n");
+
+	if (hwcap2_mask & PPC_FEATURE2_HAS_TAR)
+	    printf("  HAS TAR\n");
+
 #endif
 	return (0);
 }
