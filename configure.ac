@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(auxv, 0.1.0, rsa@us.ibm.com)
+AC_INIT(auxv, 1.0.0, rsa@us.ibm.com)
 AC_CONFIG_SRCDIR([lsauxv.c])
 AC_CONFIG_HEADER([config.h])
 
