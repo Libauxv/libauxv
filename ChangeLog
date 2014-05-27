@@ -1,5 +1,7 @@
 2014-05-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
+	* lsauxv.c (print_hwcap): Add support to HWCAP2.
+
 	* Makefile.in [test_auxv_shared]: Fix link order to include library
 	at the end.
 	[test_auxv_fallback_shared]: Likewise.

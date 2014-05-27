@@ -100,9 +100,10 @@ static void print_list(){
 static void print_hwcap(void)
 {
 	long hwcap_mask;
+	long hwcap_mask2;
 	hwcap_mask = query_auxv(AT_HWCAP);
 
-	printf("HWCAP=%lx\n", hwcap_mask);
+	printf("HWCAP1 = 0x%08lX\n", hwcap_mask);
 #ifdef __powerpc__
 	if (hwcap_mask & PPC_FEATURE_32)
 	    printf("  32-bit\n");
@@ -171,6 +172,27 @@ static void print_hwcap(void)
 	    printf("  HAS VSX\n");
 #endif
 
+	hwcap_mask2 = query_auxv(AT_HWCAP2);
+	printf("HWCAP2 = 0x%08lX\n", hwcap_mask2);
+#ifdef __powerpc__
+	if (hwcap_mask2 & PPC_FEATURE2_ARCH_2_07)
+	    printf("  ISA 2.07\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HAS_HTM)
+	    printf("  HTM\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HAS_DSCR)
+	    printf("  HAS DSCR\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HAS_EBB)
+	    printf("  HAS EBB\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HAS_ISEL)
+	    printf("  HAS ISEL\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HAS_TAR)
+	    printf("  HAS TAR\n");
+#endif
 }
 
 static ElfW(Addr) translate_a_type(char *str){
