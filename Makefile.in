@@ -213,11 +213,11 @@ $(top_builddir)/$(SHARED_TEST_REALNAME_LIB): $(top_srcdir)/auxv_test.map $(top_b
 # features.
 $(top_builddir)/test_auxv_shared: $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/test_auxv.c
 	@echo "test_auxv_shared"
-	@CC@ @CFLAGS@ -Wall -fpic -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@
+	@CC@ @CFLAGS@ -Wall -fpic $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@ -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread
 
 $(top_builddir)/test_auxv_fallback_shared: $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/test_auxv_fallback.c
 	@echo "test_auxv_fallback_shared"
-	@CC@ @CFLAGS@ -Wall -fpic -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread $(top_srcdir)/test_auxv_fallback.c -I$(install_headers) -I$(top_srcdir) -o $@
+	@CC@ @CFLAGS@ -Wall -fpic $(top_srcdir)/test_auxv_fallback.c -I$(install_headers) -I$(top_srcdir) -o $@ -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread
 	@echo
 
 $(top_builddir)/test_auxv_static: $(top_builddir)/$(STATIC_LIBRARY)

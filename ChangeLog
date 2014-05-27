@@ -1,3 +1,9 @@
+2014-05-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makefile.in [test_auxv_shared]: Fix link order to include library
+	at the end.
+	[test_auxv_fallback_shared]: Likewise.
+
 2011-08-25  Ryan S. Arnold  <rsa@linux.vnet.ibm.com>
 
 	* configure: Regenerated for libauxv 0.1.0.
