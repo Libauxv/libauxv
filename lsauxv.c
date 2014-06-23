@@ -192,6 +192,9 @@ static void print_hwcap(void)
 
 	if (hwcap_mask2 & PPC_FEATURE2_HAS_TAR)
 	    printf("  HAS TAR\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HAS_VEC_CRYPTO)
+	    printf("  HAS VEC CRYPTO\n");
 #endif
 }
 
