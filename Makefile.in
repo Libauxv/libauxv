@@ -73,7 +73,7 @@ shared: $(top_builddir)/$(SHARED_REALNAME_LIB) $(top_builddir)/$(SHARED_LINKERNA
 static:  $(top_builddir)/$(STATIC_LIBRARY)
 
 $(top_builddir)/$(app_name): $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_LINKERNAME_LIB)
-ifeq ($(sysheaders), ”)
+ifeq ($(sysheaders), )
 	@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -lpthread
 	@echo
 else
@@ -83,7 +83,7 @@ endif
 
 #@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_SONAME_LIB) -lpthread
 $(top_builddir)/lsauxv.o: $(top_srcdir)/lsauxv.c $(install_headers)/auxv.h
-ifeq ($(sysheaders), ”)
+ifeq ($(sysheaders), )
 	@CC@ @CFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers)
 	@echo
 else
@@ -92,7 +92,7 @@ else
 endif
 
 $(top_builddir)/auxv.o: $(top_srcdir)/auxv.c $(install_headers)/auxv.h
-ifeq ($(sysheaders), ”)
+ifeq ($(sysheaders), )
 	@CC@ @CFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(top_srcdir)
 	@echo
 else
@@ -125,7 +125,7 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 # This is the 'realname' shared object, i.e. the actual libauxv binary file.
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_srcdir)/auxv.map $(top_builddir)/auxv.o
 	@echo +Linking shared object files into $@.
-ifeq ($(sysheaders), ”)
+ifeq ($(sysheaders), )
 	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o  -I$(top_srcdir)
 	@echo
 else

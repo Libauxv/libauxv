@@ -49,7 +49,7 @@ AC_SUBST(enable_static)
 
 AC_SUBST(sysheaders, [])
 AC_ARG_WITH([headers], AC_HELP_STRING([--with-headers=PATH], [location of system headers to use (for example /usr/src/linux/include) 
-	@<:@default=compiler default@:>@]), [sysheaders=$withval], [sysheaders=”])
+	@<:@default=compiler default@:>@]), [sysheaders=$withval], [sysheaders=])
 
 # Checks for programs.
 AC_PROG_CC
