@@ -6,11 +6,6 @@ AC_INIT(auxv, 1.0.0, rsa@us.ibm.com)
 AC_CONFIG_SRCDIR([lsauxv.c])
 AC_CONFIG_HEADER([config.h])
 
-# We want to prevent building/configuration in the source directory.
-if test "`cd $srcdir; /bin/pwd`" = "`/bin/pwd`"; then
-	AC_MSG_ERROR([you must configure in a separate build directory])
-fi
-
 AC_ARG_ENABLE([shared],
 	      AS_HELP_STRING([--enable-shared],
 			     [build shared library @<:@default@:>@]),
