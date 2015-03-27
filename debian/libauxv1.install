@@ -1,0 +1,6 @@
+usr/bin/lsauxv
+usr/share/man/man1/lsauxv.1
+usr/share/man/man3/auxv.3
+usr/share/man/man3/libauxv.3
+usr/lib/*/libauxv.so.1
+usr/lib/*/libauxv.so.1.0.1

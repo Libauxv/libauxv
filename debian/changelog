@@ -1,0 +1,5 @@
+libauxv (1.1.0-1) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #781268)
+
+ -- Frédéric Bonnard <frediz@linux.vnet.ibm.com>  Wed, 25 Mar 2015 14:45:12 +0100

@@ -1,0 +1,5 @@
+libauxv.so.1 libauxv1 #MINVER#
+ LIBAUXV_0.0.9@LIBAUXV_0.0.9 1.0.0
+ get_auxv@LIBAUXV_0.0.9 1.0.0
+ prefetch_auxv@LIBAUXV_0.0.9 1.0.0
+ query_auxv@LIBAUXV_0.0.9 1.0.0

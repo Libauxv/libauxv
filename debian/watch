@@ -1,0 +1,3 @@
+version=3
+opts=filenamemangle=s/.+\/release_(\d\S*)\.tar\.gz/libauxv-$1\.tar\.gz/ \
+  https://github.com/Libauxv/libauxv/tags .*/release_(\d\S*)\.tar\.gz
