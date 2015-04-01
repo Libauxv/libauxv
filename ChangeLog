@@ -1,3 +1,9 @@
+2015-04-01 Rajalakshmi Srinivasaraghavan  <raji@linux.vnet.ibm.com>
+
+	* config.log: Delete file.
+	* config.status: Delete file.
+	* .gitignore: New file.
+
 2014-05-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* lsauxv.c (print_hwcap): Add support to HWCAP2.
