@@ -61,7 +61,6 @@ SHARED_TEST_LINKERNAME = @PACKAGE_NAME@_test
 
 RANLIB = @RANLIB@
 
-LDCONFIG = /sbin/ldconfig
 INSTALL = install
 
 install_headers=$(top_srcdir)/include
@@ -108,18 +107,16 @@ $(top_builddir)/auxv_test.o: $(top_builddir)/auxv.o
 	objcopy --globalize-symbol=__auxv_fallback $^ $@
 	@echo
 
-# Create libauxv.so -> libauxv.so.1 symlink.
+# Create the linker name symlink, e.g.: libauxv.so -> libauxv-1.0.0.so.
 $(top_builddir)/$(SHARED_LINKERNAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 	@echo "+Creating linker .so symlink $(notdir $@) -> $(notdir $?)"
 	ln -f -s $? $@
 	@echo
 
-# Create libauxv.so.1 -> libauxv-1.0.1.so symlink.
-# The $(SHARED_SONAME_LIB) -> $(SHARED_REALNAME_LIB) symlink is supposed to
-# be created by ldconfig be reading the `soname' from the SHARED_REALNAME_LIB.
+# Create the soname symlink, e.g.: libauxv.so.1 -> libauxv-1.0.0.so.
 $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
-	@echo "+Running ldconfig to create the library compat symlink $(notdir $@) -> $(notdir $?)"
-	$(LDCONFIG) -l $(notdir $?)
+	@echo "+Creating soname symlink $(notdir $@) -> $(notdir $?)"
+	ln -f -s $? $@
 	@echo
 
 # This is the 'realname' shared object, i.e. the actual libauxv binary file.
@@ -148,7 +145,7 @@ ifeq ("@enable_static@","static")
 endif
 	$(INSTALL) -t $(inst_libdir) $(top_builddir)/$(SHARED_REALNAME_LIB)
 	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_LINKERNAME_LIB)
-	$(LDCONFIG) -l $(inst_libdir)/$(SHARED_REALNAME_LIB)
+	ln -f -s $(SHARED_REALNAME_LIB) $(inst_libdir)/$(SHARED_SONAME_LIB)
 	$(INSTALL) -d $(inst_includedir)/
 	$(INSTALL) -d $(inst_includedir)/$(lib_name)
 	$(INSTALL) -t $(inst_includedir)/$(lib_name) $(install_headers)/*.h
@@ -196,10 +193,10 @@ $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB): $(top_builddir)/$(SHARED_TEST_REA
 	ln -f -s $? $@
 	@echo
 
-# Create libauxv_test.so.1 -> libauxv_test-1.0.1.so symlink.
+# Create test soname symlink, e.g.: libauxv_test.so.1 -> libauxv_test-1.0.1.so
 $(top_builddir)/$(SHARED_TEST_SONAME_LIB): $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)
-	@echo "+Running ldconfig to create the test library compat symlink $(notdir $@) -> $(notdir $?)"
-	$(LDCONFIG) -l $(notdir $?)
+	@echo "+Creating soname symlink $(notdir $@) -> $(notdir $?)"
+	ln -f -s $? $@
 	@echo
 
 $(top_builddir)/$(SHARED_TEST_REALNAME_LIB): $(top_srcdir)/auxv_test.map $(top_builddir)/auxv_test.o
