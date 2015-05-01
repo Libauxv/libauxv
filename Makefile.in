@@ -73,29 +73,29 @@ static:  $(top_builddir)/$(STATIC_LIBRARY)
 
 $(top_builddir)/$(app_name): $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_LINKERNAME_LIB)
 ifeq ($(sysheaders), )
-	@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -lpthread
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -lpthread
 	@echo
 else
-	@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -I$(sysheaders) -lpthread
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o -L$(top_builddir) -lauxv -I$(sysheaders) -lpthread
 	@echo
 endif
 
-#@CC@ @CFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_SONAME_LIB) -lpthread
+#@CC@ @CFLAGS@ @LDFLAGS@ -Wall -o $(top_builddir)/$(app_name) $(top_builddir)/lsauxv.o $(top_builddir)/$(SHARED_SONAME_LIB) -lpthread
 $(top_builddir)/lsauxv.o: $(top_srcdir)/lsauxv.c $(install_headers)/auxv.h
 ifeq ($(sysheaders), )
-	@CC@ @CFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers)
 	@echo
 else
-	@CC@ @CFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers) -I$(sysheaders)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -c -o $(top_builddir)/lsauxv.o $(top_srcdir)/lsauxv.c -I$(install_headers) -I$(sysheaders)
 	@echo
 endif
 
 $(top_builddir)/auxv.o: $(top_srcdir)/auxv.c $(install_headers)/auxv.h
 ifeq ($(sysheaders), )
-	@CC@ @CFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(top_srcdir)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(top_srcdir)
 	@echo
 else
-	@CC@ @CFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(sysheaders) -I$(top_srcdir)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -fpic -c -o $(top_builddir)/auxv.o $(top_srcdir)/auxv.c -I$(install_headers) -I$(sysheaders) -I$(top_srcdir)
 	@echo
 endif
 
@@ -123,10 +123,10 @@ $(top_builddir)/$(SHARED_SONAME_LIB): $(top_builddir)/$(SHARED_REALNAME_LIB)
 $(top_builddir)/$(SHARED_REALNAME_LIB): $(top_srcdir)/auxv.map $(top_builddir)/auxv.o
 	@echo +Linking shared object files into $@.
 ifeq ($(sysheaders), )
-	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o  -I$(top_srcdir)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o  -I$(top_srcdir)
 	@echo
 else
-	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o -I$(sysheaders)  -I$(top_srcdir)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv.map,-soname,$(SHARED_SONAME_LIB) -o $@ $(top_builddir)/auxv.o -I$(sysheaders)  -I$(top_srcdir)
 	@echo
 endif
 
@@ -201,7 +201,7 @@ $(top_builddir)/$(SHARED_TEST_SONAME_LIB): $(top_builddir)/$(SHARED_TEST_REALNAM
 
 $(top_builddir)/$(SHARED_TEST_REALNAME_LIB): $(top_srcdir)/auxv_test.map $(top_builddir)/auxv_test.o
 	@echo +Linking shared object files into $@.
-	@CC@ @CFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv_test.map,-soname,$(SHARED_TEST_SONAME_LIB) -o $@ $(top_builddir)/auxv_test.o  -I$(top_srcdir)
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -shared -Wl,--version-script=$(top_srcdir)/auxv_test.map,-soname,$(SHARED_TEST_SONAME_LIB) -o $@ $(top_builddir)/auxv_test.o  -I$(top_srcdir)
 	@echo
 
 # This rule depends on $(SHARED_TEST_SONAME_LIB) which is the same as
@@ -210,16 +210,16 @@ $(top_builddir)/$(SHARED_TEST_REALNAME_LIB): $(top_srcdir)/auxv_test.map $(top_b
 # features.
 $(top_builddir)/test_auxv_shared: $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/test_auxv.c
 	@echo "test_auxv_shared"
-	@CC@ @CFLAGS@ -Wall -fpic $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@ -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -fpic $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@ -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread
 
 $(top_builddir)/test_auxv_fallback_shared: $(top_builddir)/$(SHARED_TEST_LINKERNAME_LIB) $(top_builddir)/$(SHARED_TEST_REALNAME_LIB)  $(top_builddir)/$(SHARED_TEST_SONAME_LIB) $(top_srcdir)/test_auxv_fallback.c
 	@echo "test_auxv_fallback_shared"
-	@CC@ @CFLAGS@ -Wall -fpic $(top_srcdir)/test_auxv_fallback.c -I$(install_headers) -I$(top_srcdir) -o $@ -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -fpic $(top_srcdir)/test_auxv_fallback.c -I$(install_headers) -I$(top_srcdir) -o $@ -L$(top_builddir) -l$(SHARED_TEST_LINKERNAME) -lpthread
 	@echo
 
 $(top_builddir)/test_auxv_static: $(top_builddir)/$(STATIC_LIBRARY)
 	@echo "test_auxv_static"
-	@CC@ @CFLAGS@ -Wall -static -L$(top_builddir) -Wl,--whole-archive $(top_builddir)/$(STATIC_LIBRARY) -Wl,--no-whole-archive -lpthread $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@
+	@CC@ @CFLAGS@ @LDFLAGS@ -Wall -static -L$(top_builddir) -Wl,--whole-archive $(top_builddir)/$(STATIC_LIBRARY) -Wl,--no-whole-archive -lpthread $(top_srcdir)/test_auxv.c -I$(install_headers) -I$(top_srcdir) -o $@
 
 
 # Only save the error output.
