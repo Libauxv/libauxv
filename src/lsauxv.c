@@ -32,8 +32,8 @@
 
 #include <stdio.h>
 #include <strings.h>
-#include <auxv.h>
-#include <hwcap.h>
+#include <auxv/auxv.h>
+#include <auxv/hwcap.h>
 
 static void print_help(){
 	printf("Usage: lsauxv [options]\n");

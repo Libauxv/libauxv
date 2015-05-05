@@ -44,7 +44,7 @@
 #include <link.h>
 #include <pthread.h>
 #include <asm/elf.h>
-#include <auxv.h>
+#include <auxv/auxv.h>
 
 #include <errno.h>
 #define __set_errno(the_errno)	*__errno_location() = the_errno
