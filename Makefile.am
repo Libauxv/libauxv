@@ -1,4 +1,4 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = src man
 dist_doc_DATA = README COPYING.txt GFDLv1.3.txt
