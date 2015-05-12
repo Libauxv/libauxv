@@ -29,6 +29,7 @@ AC_ARG_WITH([headers],
             [sysheaders=$withval],
             [sysheaders=])
 AC_SUBST(sysheaders, [])
+AM_CONDITIONAL([SYSHEADERS_SET], [test "x$sysheaders" != "x"])
 
 # Section: Programs
 #

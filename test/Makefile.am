@@ -7,25 +7,32 @@ if TEST_STATIC
 check_PROGRAMS += test_auxv_static
 endif
 
+# Check if system headers were defined during configure
+if SYSHEADERS_SET
+include_sysheaders=-I$(sysheaders)
+else
+include_sysheaders=
+endif
+
 if TEST_SHARED
 test_auxv_shared_SOURCES = test_auxv.c auxv_test.map
 test_auxv_shared_DEPENDENCIES = libauxv_test.so
-test_auxv_shared_CFLAGS = -I$(top_srcdir)/src
+test_auxv_shared_CFLAGS = -I$(top_srcdir)/src $(include_sysheaders)
 test_auxv_shared_LDADD = libauxv_test.so -lpthread
 test_auxv_fallback_shared_SOURCES = test_auxv_fallback.c auxv_test.map
 test_auxv_fallback_shared_DEPENDENCIES = libauxv_test.so
-test_auxv_fallback_shared_CFLAGS = -I$(top_srcdir)/src
+test_auxv_fallback_shared_CFLAGS = -I$(top_srcdir)/src $(include_sysheaders)
 test_auxv_fallback_shared_LDADD = libauxv_test.so -lpthread
 endif
 
 if TEST_STATIC
 test_auxv_static_SOURCES = test_auxv.c
 test_auxv_static_DEPENDENCIES = libauxv_test.a
-test_auxv_static_CFLAGS = -I$(top_srcdir)/src
+test_auxv_static_CFLAGS = -I$(top_srcdir)/src $(include_sysheaders)
 test_auxv_static_LDADD = libauxv_test.a -lpthread
 endif
 
-auxv_test_shared.o: $(top_builddir)/src/.libs/auxv.o
+auxv_test_shared.o: $(top_builddir)/src/.libs/libauxv_la-auxv.o
 	objcopy --globalize-symbol=__auxv_fallback $< $@
 
 libauxv_test-1.0.0.so: auxv_test_shared.o
@@ -40,7 +47,7 @@ libauxv_test.so.1: libauxv_test-1.0.0.so
 libauxv_test.so: libauxv_test.so.1
 	ln -f -s $< $@
 
-auxv_test_static.o: $(top_builddir)/src/auxv.o
+auxv_test_static.o: $(top_builddir)/src/libauxv_la-auxv.o
 	cp $< $@
 
 libauxv_test.a: $(top_builddir)/src/.libs/libauxv.a
