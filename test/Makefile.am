@@ -58,6 +58,16 @@ test_auxv_fallback_shared.test: test_auxv_fallback_shared
 test_auxv_static.test: test_auxv_static
 	$(top_srcdir)/test/$@
 
+.PHONY: clean-local
+clean-local:
+	rm -f libauxv_test-1.0.0.so \
+	      libauxv_test.so.1 \
+	      libauxv_test.so \
+	      libauxv_test.a \
+	      test_auxv_shared.out \
+	      test_auxv_fallback_shared.out \
+	      test_auxv_static.out
+
 # Define which check programs should be executed
 TESTS =
 if TEST_SHARED
