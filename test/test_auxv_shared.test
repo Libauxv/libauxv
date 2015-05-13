@@ -1,0 +1,1 @@
+LD_LIBRARY_PATH="./:$LD_LIBRARY_PATH" ./test_auxv_shared 2> test_auxv_shared.out 1> /dev/null

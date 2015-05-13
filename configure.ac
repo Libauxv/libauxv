@@ -38,9 +38,14 @@ AC_PROG_CXX
 #
 # Library tools (note: ranlib is deprecated by libtool)
 AC_PROG_RANLIB
+AC_PROG_LN_S
 AM_PROG_AR
 AM_PROG_LIBTOOL
 LT_INIT
+#
+# Pass libtool options to automake
+AM_CONDITIONAL([TEST_SHARED], [test "x$enable_shared" = "xyes"])
+AM_CONDITIONAL([TEST_STATIC], [test "x$enable_static" = "xyes"])
 
 # Section: Libraries
 #
@@ -72,5 +77,6 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   man/Makefile
+  test/Makefile
 ])
 AC_OUTPUT

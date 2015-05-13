@@ -30,8 +30,8 @@
      DAMAGE.
  */
 
-#include <auxv.h>
-#include <hwcap.h>
+#include <auxv/auxv.h>
+#include <auxv/hwcap.h>
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h> /* for __environ.  */
