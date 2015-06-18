@@ -16,6 +16,14 @@ Libraries should use libaux to access auxv information, because they have no
 access to 'main' and trying to find auxv after env has no guarantees, since the
 environment may have been mangled.
 
+
+%package devel
+Summary: Development libraries for Libauxv
+Requires: %{name} = %{version}-%{release}
+
+%description devel
+Header and Library files for development with Libauxv
+
 # Uncomment the following line to generate a debuginfo package on SUSE systems.
 # NOTE: On Fedora and RHEL systems, the following line cannot be uncommented,
 #       because such systems define and generate debuginfo packages by default.
@@ -45,14 +53,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}/COPYING.txt
 %{_docdir}/%{name}/GFDLv1.3.txt
 %{_docdir}/%{name}/README
-%{_includedir}/auxv/auxv.h
-%{_includedir}/auxv/hwcap.h
-%{_libdir}/libauxv.a
-%{_libdir}/libauxv.la
 %{_libdir}/libauxv.so*
 %{_mandir}/man1/lsauxv.1.gz
 %{_mandir}/man3/auxv.3.gz
 %{_mandir}/man3/libauxv.3.gz
+
+%files devel
+%defattr(-,root,root)
+%{_includedir}/auxv/auxv.h
+%{_includedir}/auxv/hwcap.h
+%{_libdir}/libauxv.a
+%{_libdir}/libauxv.la
+
 
 
 %changelog
