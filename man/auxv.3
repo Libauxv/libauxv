@@ -9,6 +9,7 @@
 .Nm get_auxv
 .Nd functions for querying the auxiliary vector
 .Sh LIBRARY
+.ds str-Lb-libauxv Auxiliary Vector library (libauxv, \-lauxv)
 .Lb libauxv
 .Sh SYNOPSIS
 .In auxv/auxv.h
@@ -128,7 +129,7 @@ int main()
   if (prefetch_auxv ())
     {
       printf("prefetch_auxv () failed with errno %d.\\n", errno);
-      return -1;
+      return \-1;
     }
 
   hwcap_mask = (unsigned long int) query_auxv (AT_HWCAP);
@@ -163,7 +164,7 @@ Libauxv uses the POSIX function
 .Fn pthread_once
 in order to enforce threadsafe singleton creation when it reads the platform
 auxiliary vector.  Therefore there is a dependency on libpthread.so and the
-user application must be linked with -lpthread.
+user application must be linked with \-lpthread.
 .Sh KNOWN ISSUES
 On older systems which don't have /proc/self/auxv support libauxv will scan to
 the end of the environment, knowing that the auxv follows it immediately.  It
@@ -183,21 +184,21 @@ when using libauxv on a system with no /proc/self/auxv.
 .Sh RATIONALE
 The functionality in Libauxv was originally proposed for inclusion in GLIBC
 but was rejected by the maintainer.
-
+.Pp
 The reason this library is necessary is as follows:
-
+.Pp
 1.) GLIBC won't provide access to the 5th process variable, which is the
 auxiliary vector (see the link above).
-
+.Pp
 2.) Libraries may need access to the auxv information but only 'main' can find
 it.
-
+.Pp
 3.) Libraries may try to find the auxv after the env, but as a library you
 can't guarantee that a user application hasn't mangled the environment.
-
+.Pp
 4.) Given that the most reliable method for querying the aux vector is through
 /proc/self/auxv a reusable library is useful.
-
+.Pp
 5.) There is an automatic fallback to attempting to read the aux vector from
 the env if the /proc/self/auxv isn't supported by the kernel.
 .Sh SEE ALSO
