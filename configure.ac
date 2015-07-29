@@ -10,7 +10,7 @@
 #
 # Autoconf initialization
 AC_PREREQ(2.61)
-AC_INIT(auxv, 1.0.0, rsa@us.ibm.com)
+AC_INIT(auxv, 1.1.0, tulioqm@br.ibm.com)
 AC_CONFIG_MACRO_DIR([m4])
 #
 # Automake initialization

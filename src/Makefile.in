@@ -336,7 +336,7 @@ libauxv_la_SOURCES = auxv.c auxv.map
 libauxv_la_CFLAGS = $(include_sysheaders)
 libauxv_la_LIBADD = -lpthread
 libauxv_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/src/auxv.map \
-                     -version-info 1:0:0
+                     -version-info 1:1:0
 
 nobase_include_HEADERS = auxv/auxv.h auxv/hwcap.h
 all: all-am
