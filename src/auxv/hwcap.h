@@ -50,7 +50,9 @@
 #define PPC_FEATURE2_HAS_ISEL          0x08000000 /* Integer Select */
 #define PPC_FEATURE2_HAS_TAR           0x04000000 /* Target Address Register */
 #define PPC_FEATURE2_HAS_VEC_CRYPTO    0x02000000 /* Target supports vector
-						     instructions.  */
+                                                     instructions.  */
+#define PPC_FEATURE2_HTM_NOSC          0x01000000 /* Kernel aborts transactions
+                                                     in syscall */
 
 #endif /* __powerpc__  */
 
