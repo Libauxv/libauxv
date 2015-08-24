@@ -195,6 +195,9 @@ static void print_hwcap(void)
 
 	if (hwcap_mask2 & PPC_FEATURE2_HAS_VEC_CRYPTO)
 	    printf("  HAS VEC CRYPTO\n");
+
+	if (hwcap_mask2 & PPC_FEATURE2_HTM_NOSC)
+	    printf("  HTM NOSC\n");
 #endif
 }
 
