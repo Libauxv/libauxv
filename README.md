@@ -20,10 +20,13 @@ license is included in the file entitled "GFDLv1.3.txt"
 ===========================================================================
 NOTE:Eight space tabs are the optimum editor setting for reading this file.
 ===========================================================================
+WARNING: This library is going to be discontinued. Please use glibc's
+getauxval () function for similar functionality instead.
+===========================================================================
 
 		Author(s) : Ryan S. Arnold <rsa@us.ibm.com>
 		      Date Created: January 29, 2010
-			  Last Updated: Mar 20, 2011
+			  Last Updated: Oct 28, 2015
 
 ===========================================================================
 

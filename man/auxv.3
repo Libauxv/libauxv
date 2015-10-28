@@ -18,6 +18,9 @@
 .Fn "ElfW(auxv_t) * get_auxv" "void"
 .Sh DESCRIPTION
 .Pp
+* WARNING: This library is going to be discontinued. Please use glibc's           
+getauxval () function for similar functionality instead.
+.Pp
 .Fn prefetch_auxv
 allocates PAGE_SIZE amount of memory on the heap and loads the
 .Pa /proc/self/auxv 

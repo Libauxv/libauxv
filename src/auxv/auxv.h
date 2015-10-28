@@ -77,7 +77,9 @@ extern "C" {
    *   Note: On failure, no memory is allocated.
    *
    */
-  extern int prefetch_auxv(void);
+  extern int prefetch_auxv(void)
+  __attribute__ ((deprecated ("Warning: libauxv is going to be discontinued. "
+  "Please use glibc's getauxval() instead.")));
 
   /* Function: get_auxv
    * -------------------------------------------------------------------------
@@ -90,7 +92,9 @@ extern "C" {
    *  return the address of that memory.  If memory has not been allocated it
    *  will return zero.
    */
-  extern ElfW(auxv_t) * get_auxv(void);
+  extern ElfW(auxv_t) * get_auxv(void)
+  __attribute__ ((deprecated ("Warning: libauxv is going to be discontinued. "
+  "Please use glibc's getauxval() instead.")));
 
   /* Function: query_auxv
    * -------------------------------------------------------------------------
@@ -120,7 +124,9 @@ extern "C" {
    *
    */
 
-  extern ElfW(Addr) query_auxv(ElfW(Addr));
+  extern ElfW(Addr) query_auxv(ElfW(Addr))
+  __attribute__ ((deprecated ("Warning: libauxv is going to be discontinued. "
+  "Please use glibc's getauxval() instead.")));
 
 #ifdef __cplusplus
 }
