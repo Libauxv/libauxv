@@ -37,6 +37,21 @@ AM_CONDITIONAL([SYSHEADERS_SET], [test "x$sysheaders" != "x"])
 AC_PROG_CC
 AC_PROG_CXX
 #
+# We now require at least GCC-4.5 to build libauxv.
+#
+AC_CACHE_CHECK([if $CC is sufficient to build libauxv], libauxv_cv_compiler_ok, [
+AC_TRY_COMPILE([], [
+#if !defined __GNUC__ || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#error insufficient compiler
+#endif],
+	       [libauxv_cv_compiler_ok=yes],
+	       [libauxv_cv_compiler_ok=no])])
+AS_IF([test $libauxv_cv_compiler_ok != yes],
+      [critic_missing="$critic_missing gcc"])
+#
+test -n "$critic_missing" && AC_MSG_ERROR([
+*** These critical programs are missing or too old:$critic_missing
+*** Check the README file for required versions.])
 # Library tools (note: ranlib is deprecated by libtool)
 AC_PROG_RANLIB
 AC_PROG_LN_S

@@ -107,6 +107,11 @@ singleton creation.  This of course requires a version of glibc with NPTL
 support (GLIBC 2.5)
 
 ---------------------------------------------------------------------------
+4.3  GCC Minimum Version
+
+Libauxv requires GCC 4.5 to compile.
+
+---------------------------------------------------------------------------
 5.  Configuration
 
 Libauxv must be built in a directory that is not the base level source

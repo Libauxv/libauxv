@@ -5678,6 +5678,44 @@ fi
 
 
 #
+# We now require at least GCC-4.5 to build libauxv.
+#
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if $CC is sufficient to build libauxv" >&5
+$as_echo_n "checking if $CC is sufficient to build libauxv... " >&6; }
+if ${libauxv_cv_compiler_ok+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+#if !defined __GNUC__ || __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 5)
+#error insufficient compiler
+#endif
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  libauxv_cv_compiler_ok=yes
+else
+  libauxv_cv_compiler_ok=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libauxv_cv_compiler_ok" >&5
+$as_echo "$libauxv_cv_compiler_ok" >&6; }
+if test $libauxv_cv_compiler_ok != yes; then :
+  critic_missing="$critic_missing gcc"
+fi
+#
+test -n "$critic_missing" && as_fn_error $? "
+*** These critical programs are missing or too old:$critic_missing
+*** Check the README file for required versions." "$LINENO" 5
 # Library tools (note: ranlib is deprecated by libtool)
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
