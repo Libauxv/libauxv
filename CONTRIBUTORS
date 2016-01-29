@@ -10,8 +10,10 @@ Origin (DCO) indicated below.
 
 Maintainers:
 
-	Base:    Ryan S. Arnold <rsa@us.ibm.com>
-	PowerPc: Ryan S. Arnold <rsa@us.ibm.com>
+	Base:    Raphael M. Zinsly <rzinsly@linux.vnet.ibm.com>
+		 Carlos Eduardo Seo <cseo@linux.vnet.ibm.com>
+	PowerPc: Raphael M. Zinsly <rzinsly@linux.vnet.ibm.com>
+		 Carlos Eduardo Seo <cseo@linux.vnet.ibm.com>
 
 Contributors:
 
@@ -20,6 +22,8 @@ Contributors:
 	Peter Bergner <bergner@linux.vnet.ibm.com>
 	Ryan S. Arnold <rsa@us.ibm.com>
 	Juvenal A. Silva Jr. <juvenal@linux.vnet.ibm.com>
+	Raphael Zinsly <rzinsly@br.ibm.com>
+	Carlos Eduardo Seo <cseo@linux.vnet.ibm.com>
 
 Process For Accepting Third Party Code Contributions:
 
