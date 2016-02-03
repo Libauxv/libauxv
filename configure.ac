@@ -10,7 +10,7 @@
 #
 # Autoconf initialization
 AC_PREREQ(2.61)
-AC_INIT(libauxv, 1.1.0, rzinsly@linux.vnet.ibm.com)
+AC_INIT(libauxv, 1.1.0, rzinsly@linux.vnet.ibm.com cseo@linux.vnet.ibm.com)
 AC_CONFIG_MACRO_DIR([m4])
 #
 # Automake initialization
