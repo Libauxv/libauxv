@@ -1,0 +1,2 @@
+#This is false positive
+libauxv1 binary: hardening-no-fortify-functions usr/lib/powerpc64le-linux-gnu/libauxv.so.1.0.0
